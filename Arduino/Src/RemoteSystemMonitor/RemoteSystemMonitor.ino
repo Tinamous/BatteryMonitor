@@ -142,12 +142,21 @@ void loop(void)
   loadvoltage = busvoltage + (shuntvoltage / 1000);
     
   if (debug) {    
-    Serial.println("-------------------------------------------------------------------");
+    Serial.println("-------------------------------------------------------");
     Serial.println("Charger connected: ");    
-    Serial.print("Bus Voltage:   "); Serial.print(busvoltage); Serial.println(" V");
-    Serial.print("Current:       "); Serial.print(current_mA); Serial.println(" mA");
+    Serial.print("Bus Voltage:   "); 
+    Serial.print(busvoltage); 
+    Serial.println(" V");
+    
+    Serial.print("Current:       "); 
+    Serial.print(current_mA); 
+    Serial.println(" mA");
     Serial.println("");
-    Serial.print("Loop counter:  "); Serial.print(loopCounter); Serial.println("");
+    
+    Serial.print("Loop counter:  "); 
+    Serial.print(loopCounter); 
+    Serial.println("");
+    
     Serial.println("");
   }
           
@@ -174,8 +183,14 @@ void loop(void)
 
     if (debug) {
       Serial.println("Charger disconnected: ");
-      Serial.print("Charge Off Voltage:  "); Serial.print(busvoltage_off_charge); Serial.println(" V");
-      Serial.print("Charge Off Current: "); Serial.print(current_off_charge_mA); Serial.println(" mA");
+      Serial.print("Charge Off Voltage:  "); 
+      Serial.print(busvoltage_off_charge); 
+      Serial.println(" V");
+      
+      Serial.print("Charge Off Current: "); 
+      Serial.print(current_off_charge_mA); 
+      Serial.println(" mA");
+      
       Serial.println("");
     }
   
