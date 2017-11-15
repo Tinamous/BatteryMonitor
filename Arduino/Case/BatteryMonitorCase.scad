@@ -9,17 +9,26 @@ width = 140;
 // Overall length /mm (without aerial 117mm, With aerial 125mm)
 length = 140;
 
-enclosureHeight = 32; // Max for USB being in top part.
-enclosureHeight = 32;
+//enclosureHeight = 32; // Max for USB being in top part.
+enclosureHeight = 37; // Max for USB being in top part.
 
-pcbWidth = 100;
-pcbLength = 100;
+// 100x100 for general PCB
+pcbWidth = 100; // x direction
+pcbLength = 100; // y direction
+// Offset from edge for the PCB mounting hole
+pcbMountOffset = 5;
+
+
 pcbXOffset = (width - pcbWidth)/2 ;
 //pcbYOffset = (length - pcbLength)/2 + 10;
 // Keep the PCB 10mm from the top edge
 // allows the aerial to be stuck down.
 // make gap 21mm for Arduiono MRK 1000 (WiFi)
-pcbYOffset = (length - pcbLength - 12);
+pcbYOffset = (length - pcbLength - 12); 
+
+// Kitchen Lights
+// Center.
+//pcbYOffset = (length - pcbLength - 25);
 
 echo ("pcbXOffset",pcbXOffset);
 echo ("pcbYOffset",pcbYOffset);
@@ -39,22 +48,34 @@ wallThickness = 3;
 pcbMountScrewHoleDiameter = 4.4;
 
 // caseOptions
-addSecondLowerTrunkingInlet = true;
-addUsbOutletHole = true;
+
 addPowerSideHoles = true;
 addFetHoles = false; 
 addSensorSideHoles = false;
 addArduinoUsbHole = true;
 
+// Top 
 addTopMiddleRoundConduitHole = false;
+addTopRightTrunkingInlet = true;
+addTopCenterTrunkingInlet = false;
+
+// Bottom
 addMiddleRoundConduitHole = false;
 addTwinConduitHoles = false;
-
-addMountingTabs = true;
+addPowerLowerTrunkingInlet = true;
+addSecondLowerTrunkingInlet = true;
+addUsbOutletHole = true;
 
 addMountingTabs = true;
 
 conduitHoleDiameter = 22;
+
+mountingTabYOffset = 25;
+countersunkMountingScrews = true;
+
+// Screw or threaded insert
+lidScrewDiameter = pcbMountScrewHoleDiameter; //4.4
+includeLidScrewMounts = true;
             
 // Make it a nice distance appart for the holes.
 // that doesn't change if the case is made larger
@@ -102,7 +123,22 @@ module screw(x,y, height) {
     }
 }
 
-module pcb() {
+module genericPcb() {
+    
+//pcbWidth = 100;
+//pcbLength = 100;
+// Offset from edge for the PCB mounting hole
+//pcbMountOffset = 5;
+    
+    roundedCube(pcbWidth,pcbLength , 1.6, 8);
+    screw(pcbMountOffset, pcbMountOffset, height, baseHeight);
+    screw(pcbMountOffset,pcbLength - pcbMountOffset, height, baseHeight);
+    screw(pcbWidth - pcbMountOffset, pcbMountOffset, height, baseHeight);
+    screw(pcbWidth - pcbMountOffset,pcbLength - pcbMountOffset, height, baseHeight);
+}
+
+// Arduino System Monitor PCB.
+module arduinoSystemMonitorPcb() {
     roundedCube(100,100, 1.6, 8);
     screw(5,5, height, baseHeight);
     screw(5,95, height, baseHeight);
@@ -216,12 +252,15 @@ module pcbMountPin(x,y, height, baseHeight) {
 }
 
 module addPcbMounts() {
-    // Use pins on the end two to make it easier to 
-    pcbMount(5,5, height, baseHeight);
-    pcbMount(95,5, height, baseHeight);
     
-    pcbMount(5,95, height, baseHeight);
-    pcbMount(95,95, height, baseHeight);
+    //pcbWidth = 100;
+    //pcbLength = 100;
+    // Use pins on the end two to make it easier to 
+    pcbMount(pcbMountOffset,pcbMountOffset, height, baseHeight);
+    #pcbMount(pcbWidth - pcbMountOffset,pcbMountOffset, height, baseHeight);
+    
+    pcbMount(pcbMountOffset,pcbLength - pcbMountOffset, height, baseHeight);
+    pcbMount(pcbWidth - pcbMountOffset,pcbLength - pcbMountOffset, height, baseHeight);
 }
 
 module base() {       
@@ -242,7 +281,7 @@ secondTrunkingXOffset = width - (pcbXOffset + powerInPcbOffset + trunkingPortWid
         }
         union() {
             translate([wallThickness, wallThickness, baseHeight]) {
-                roundedCube(width-(wallThickness*2), length-(wallThickness*2), enclosureHeight , 10);
+                roundedCube(width-(wallThickness*2), length-(wallThickness*2), enclosureHeight , 3);
             }
             
             // Vertical Holes referenced to the PCB
@@ -251,7 +290,7 @@ secondTrunkingXOffset = width - (pcbXOffset + powerInPcbOffset + trunkingPortWid
                 if (addPowerSideHoles) {
                     // Charger & Output for 25mm trunking
                     translate([width-wallThickness - 0.01,19,baseHeight]) {
-                        cube([wallThickness + 0.02, trunkingPortWidth, 12]);
+                        cube([wallThickness + 0.02, trunkingPortWidth, 22]);
                     }
                     
                     // Output
@@ -282,8 +321,10 @@ secondTrunkingXOffset = width - (pcbXOffset + powerInPcbOffset + trunkingPortWid
                 // Power in
                 // Insert power connector on side
                 // hole is right size for 25mm trunking.
-                translate([powerInPcbOffset,-4,baseHeight]) {
-                    cube([trunkingPortWidth, 10, 12]);
+                if (addPowerLowerTrunkingInlet) {
+                    translate([powerInPcbOffset,-4,baseHeight]) {
+                        cube([trunkingPortWidth, 10, 12]);
+                    }
                 }
                 
                 // Usb Plug cutout in relation to PCB Z height
@@ -309,10 +350,23 @@ secondTrunkingXOffset = width - (pcbXOffset + powerInPcbOffset + trunkingPortWid
             }
                         
             if (addTopMiddleRoundConduitHole) {
-                translate([width / 2, length+0.01, 15,]) {
+                translate([width / 2, length+0.01, 15]) {
                     rotate([90, 0,0]) {
                         cylinder(d=conduitHoleDiameter, h=wallThickness+0.1);
                     }
+                }
+            }
+            
+            if (addTopRightTrunkingInlet) {
+                // Align with lower right (power) trunking inlet.
+                translate([pcbXOffset + powerInPcbOffset, length-10+0.01, baseHeight]) {  
+                    #cube([trunkingPortWidth, 10, 12]);
+                }
+            }
+            
+            if (addTopCenterTrunkingInlet) {
+                translate([(width -trunkingPortWidth)/ 2, length-10+0.01, baseHeight]) {  
+                    #cube([trunkingPortWidth, 10, 12]);
                 }
             }
             
@@ -320,13 +374,14 @@ secondTrunkingXOffset = width - (pcbXOffset + powerInPcbOffset + trunkingPortWid
             // Add a single 20mm hole for round conduit
             // on the lower wall of the case
             if (addMiddleRoundConduitHole) {
-                translate([width / 2, wallThickness+0.01, 15,]) {
+                translate([width / 2, wallThickness+0.01, 15]) {
                     rotate([90, 0,0]) {
                         cylinder(d=conduitHoleDiameter, h=wallThickness+0.1);
                     }
                 }
             }
-                        
+            
+        
             // add 2x 20mm holes for round 
             // conduit on the lower 
             if (addTwinConduitHoles) {
@@ -350,49 +405,105 @@ secondTrunkingXOffset = width - (pcbXOffset + powerInPcbOffset + trunkingPortWid
         }
     }
     
-mountingTabYOffset = 25;
+// offset from the edge
+
     if (addMountingTabs) {
         mountingTab(-10, 10, mountingTabYOffset, true);
         mountingTab(-10, 10, length - mountingTabYOffset, true);
         mountingTab(width + 10, 10, mountingTabYOffset, false);
         mountingTab(width + 10, 10, length - mountingTabYOffset, false);
     }
+    
+    // If add screw mounts...
+    if (includeLidScrewMounts) {
+        lidScrewMounts();
+    }
 }
 
+
+// Side tabs to mount the box on the wall
 module mountingTab(x, offset, y, leftSide) {
+
+tapDepth = 4;
 
     translate([x,y,0]) {
         difference() {
             union() {
-                cylinder(d=18, h=4);
+                cylinder(d=18, h=tapDepth);
                 if (leftSide) {
                     translate([0, -9, 0]) {
-                        cube([offset, 18, 4]);
+                        cube([offset, 18, tapDepth]);
                     }
                 } else {
                     translate([-offset, -9, 0]) {
-                        cube([offset, 18, 3]);
+                        cube([offset, 18, tapDepth]);
                     }
                 }
             }
             union() {
                 cylinder(d=6, h=10);
-                translate([0,0,2]) {
-                    cylinder(d=12, h=10);
+                if (countersunkMountingScrews) {
+                    translate([0,0,1.5]) {
+                        // Large cutout for screw head.
+                        //#cylinder(d=12, h=10);
+                        cylinder(d1=6, d2=12, h=tapDepth + 0.1);
+                    }
+                } else {
+                    translate([0,0,1.5]) {
+                        // Large cutout for screw head.
+                        //#cylinder(d=12, h=10);
+                        cylinder(d=12, h=tapDepth + 0.1);
+                    }
                 }
             }
         }
     }
 }
 
+// Mounting holes for lid to be screwed in.
+module lidScrewMounts() {
+    lidScrew(-3, -3, 5, 5);
+    lidScrew(3,-3, width-5, 5); // bottom right
+    lidScrew(3, 3, width-5, length-5); // top right
+    lidScrew(-3, 3, 5, length-5);
+}
+
+
+module lidScrew(xOffset, yOffset, xPosition, yPosition) {
+
+    
+    translate([xPosition, yPosition, enclosureHeight-20]) {
+        difference() {
+            union() {
+                hull() {
+                    translate([xOffset,yOffset,0]) {
+                        cylinder(d=1, h=2);
+                    }
+                    
+                    translate([0,0,10]) {
+                        cylinder(d=10, h=10);
+                    }
+                }
+            }
+            union() {
+                translate([0,0,10]) {
+                        cylinder(d=lidScrewDiameter, h=11);
+                    }
+            }
+        }
+    }
+    
+}
+
 base();
 
 translate([pcbXOffset,pcbYOffset,0]) {
     translate([0,0,baseHeight + height]) {
-        %pcb();
+        //%arduinoSystemMonitorPcb();
+        %genericPcb();
     }
 
     translate([18, 100-68, baseHeight + height + 1.6]) {
-       %arduino();
+       //%arduino();
     }
 }
