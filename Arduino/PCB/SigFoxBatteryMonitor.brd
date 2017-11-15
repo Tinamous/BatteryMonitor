@@ -183,7 +183,7 @@
 <text x="99.3775" y="78.105" size="1.6764" layer="25" ratio="12" rot="R90">+</text>
 <text x="99.06" y="74.295" size="1.016" layer="25" ratio="12" rot="R90">GND</text>
 <text x="52.3875" y="65.0875" size="1.016" layer="25" ratio="12">S.Harrison 11 August 2017</text>
-<text x="52.3875" y="66.9925" size="1.6764" layer="25" ratio="12">SigFix Remote 
+<text x="52.3875" y="66.9925" size="1.6764" layer="25" ratio="12">SigFox Remote 
 System Monitor</text>
 <text x="48.895" y="98.1075" size="1.016" layer="25" ratio="12">https://github.com/Tinamous/BatteryMonitor</text>
 <text x="52.3875" y="63.5" size="1.016" layer="25" ratio="12">V1.0</text>
