@@ -1,9 +1,11 @@
-Internet Of Things Battery Monitor
-==================================
+Internet Of Things Remove System Monitor
+========================================
 
 For remote locations a battery powered devices may be the only realistic way of powering equipment, these may be left to work for months or years until one day the battery dies or goes flat unexpectedly or something else happens.
 
-This project uses the Sigfox Arduino to provide low power wireless internet connectivity and a INA219 to monitor the battery. This allows monitor and early notification of problems.
+This project uses the Sigfox Arduino MKR FOX 1200 to provide low power wireless internet connectivity and a INA219 to monitor the battery. This allows monitor and early notification of problems.
+
+Additionally 2x latching relays, 3x N-Channel fets and some digital/analog inputs provide means to monitor other parts of a system as well (e.g. monitor switches, water levels, control pumps, lights etc.).
 
 The system is composed of:
 
