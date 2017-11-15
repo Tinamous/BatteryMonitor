@@ -1,4 +1,4 @@
-Internet Of Things Remove System Monitor
+Internet Of Things Remote System Monitor
 ========================================
 
 For remote locations a battery powered devices may be the only realistic way of powering equipment, these may be left to work for months or years until one day the battery dies or goes flat unexpectedly or something else happens.
